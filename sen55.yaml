@@ -1,0 +1,142 @@
+substitutions:
+  name: sen55-01
+  friendly_name: SEN55 Air Monitor 01
+  sensor_id: sen55_01
+  location: Zone 1 - Top Left Window Side
+  room: UP EEEI Smart I-Lab
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  comment: ${sensor_id} - ${location}
+  min_version: 2023.11.0
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# ================= WIFI =================
+wifi:
+  ssid: "Smart-iLAB"
+  password: "++adminsmartilab2023!!"
+
+  fast_connect: true
+  power_save_mode: none
+
+  # Optional static IP (fill only if needed)
+  # manual_ip:
+  #   static_ip: 10.158.71.50
+  #   gateway: 10.158.71.1
+  #   subnet: 255.255.255.0
+
+  ap:
+    ssid: "${friendly_name} Fallback"
+    password: "12345678"
+
+# ================= LOGGING ==============
+logger:
+  level: DEBUG
+
+# ================= OTA ==================
+ota:
+  platform: esphome
+  password: "smartilabOTA"
+
+# ================= WEB UI ===============
+web_server:
+  port: 80
+
+# ================= MQTT =================
+mqtt:
+  broker: 10.158.71.19
+  port: 1883
+  username: guest
+  password: smartilab123
+  topic_prefix: ${sensor_id}
+  discovery: false
+  reboot_timeout: 0s
+
+  birth_message:
+    topic: ${sensor_id}/status
+    payload: online
+
+  will_message:
+    topic: ${sensor_id}/status
+    payload: offline
+
+# ================= TIME =================
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: Asia/Manila
+
+# ================= I2C ==================
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: true
+
+# ================= SENSOR ===============
+sensor:
+  - platform: sen5x
+    id: sen55
+    address: 0x69
+    update_interval: 10s
+
+    pm_1_0:
+      name: "${friendly_name} PM1.0"
+      id: pm1
+    pm_2_5:
+      name: "${friendly_name} PM2.5"
+      id: pm25
+    pm_4_0:
+      name: "${friendly_name} PM4.0"
+      id: pm4
+    pm_10_0:
+      name: "${friendly_name} PM10"
+      id: pm10
+    temperature:
+      name: "${friendly_name} Temperature"
+      id: temp
+    humidity:
+      name: "${friendly_name} Humidity"
+      id: hum
+    voc:
+      name: "${friendly_name} VOC"
+      id: voc
+    nox:
+      name: "${friendly_name} NOx"
+      id: nox
+
+# ============== TEXT SENSOR =============
+text_sensor:
+  - platform: template
+    name: "${friendly_name} Location"
+    lambda: |-
+      return {"${location}"};
+
+  - platform: template
+    name: "${friendly_name} Room"
+    lambda: |-
+      return {"${room}"};
+
+# ============== JSON MQTT PUSH ==========
+interval:
+  - interval: 10s
+    then:
+      - mqtt.publish_json:
+          topic: ${sensor_id}/data
+          payload: |-
+            root["timestamp"] = id(sntp_time).now().strftime("%Y-%m-%d %H:%M:%S");
+            root["sensor_id"] = "${sensor_id}";
+            root["location"] = "${location}";
+            root["room"] = "${room}";
+            root["pm1_0"] = id(pm1).state;
+            root["pm2_5"] = id(pm25).state;
+            root["pm4_0"] = id(pm4).state;
+            root["pm10_0"] = id(pm10).state;
+            root["temperature"] = id(temp).state;
+            root["humidity"] = id(hum).state;
+            root["voc"] = id(voc).state;
+            root["nox"] = id(nox).state;
