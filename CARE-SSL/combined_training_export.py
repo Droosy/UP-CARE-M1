@@ -17,7 +17,7 @@ AIR1_API_KEY = os.getenv("AIR1_API_KEY", "3a21fe5a-78cb-4252-99ea-c8a87be7982e")
 
 MQTT_BROKER = os.getenv("SEN55_MQTT_BROKER", "10.158.71.19")
 MQTT_PORT = int(os.getenv("SEN55_MQTT_PORT", "1883"))
-MQTT_TOPIC = os.getenv("SEN55_MQTT_TOPIC", "sen55_#")
+MQTT_TOPIC = os.getenv("SEN55_MQTT_TOPIC", "#")
 MQTT_USERNAME = os.getenv("SEN55_MQTT_USERNAME", "guest")
 MQTT_PASSWORD = os.getenv("SEN55_MQTT_PASSWORD", "smartilab123")
 
