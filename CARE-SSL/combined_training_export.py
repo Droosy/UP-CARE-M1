@@ -50,9 +50,6 @@ AIR1_VALUE_FIELDS = [
 
 SEN55_METADATA_FIELDS = [
     "sensor_id",
-    "x",
-    "y",
-    "z",
     "location",
     "room",
 ]
