@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
-
 import requests
 
 
@@ -17,7 +16,7 @@ AIR1_API_KEY = os.getenv("AIR1_API_KEY", "3a21fe5a-78cb-4252-99ea-c8a87be7982e")
 
 MQTT_BROKER = os.getenv("SEN55_MQTT_BROKER", "10.158.71.19")
 MQTT_PORT = int(os.getenv("SEN55_MQTT_PORT", "1883"))
-MQTT_TOPIC = os.getenv("SEN55_MQTT_TOPIC", "#")
+MQTT_TOPICS = ["sen55_01/data", "sen55_02/data",]
 MQTT_USERNAME = os.getenv("SEN55_MQTT_USERNAME", "guest")
 MQTT_PASSWORD = os.getenv("SEN55_MQTT_PASSWORD", "smartilab123")
 
@@ -46,6 +45,11 @@ AIR1_VALUE_FIELDS = [
     ("rh", "humidity"),
     ("co2", "co2"),
     ("pm25", "pm_2_5"),
+]
+
+SEN55_SENSORS = [
+    "sen55_01",
+    "sen55_02",
 ]
 
 SEN55_METADATA_FIELDS = [
@@ -237,11 +241,6 @@ def parse_args() -> argparse.Namespace:
         help="SEN55 MQTT port. Default: 1883.",
     )
     live.add_argument(
-        "--mqtt-topic",
-        default=MQTT_TOPIC,
-        help="SEN55 MQTT topic. Default: sen55_01/data.",
-    )
-    live.add_argument(
         "--mqtt-username",
         default=MQTT_USERNAME,
         help="SEN55 MQTT username.",
@@ -395,14 +394,18 @@ def build_headers(sensor_count: int) -> List[str]:
     for position in range(1, sensor_count + 1):
         headers.append(f"air1_raw_json_s{position}")
 
-    headers.append("sen55_source_timestamp")
-    headers.append("sen55_age_seconds")
-    headers.append("sen55_is_fresh")
-    for field in SEN55_METADATA_FIELDS:
-        headers.append(f"sen55_{field}")
-    for field in SEN55_VALUE_FIELDS:
-        headers.append(f"sen55_{field}")
-    headers.append("sen55_raw_json")
+    for sensor_name in SEN55_SENSORS:
+        headers.append(f"{sensor_name}_source_timestamp")
+        headers.append(f"{sensor_name}_age_seconds")
+        headers.append(f"{sensor_name}_is_fresh")
+
+        for field in SEN55_METADATA_FIELDS:
+            headers.append(f"{sensor_name}_{field}")
+
+        for field in SEN55_VALUE_FIELDS:
+            headers.append(f"{sensor_name}_{field}")
+
+        headers.append(f"{sensor_name}_raw_json")
 
     return headers
 
@@ -411,7 +414,7 @@ def build_row(
     timestamp: datetime,
     sensor_order: List[str],
     air1_latest_by_position: Dict[int, Optional[Reading]],
-    sen55_latest: Optional[Reading],
+    sen55_latest_by_sensor: Dict[str, Optional[Reading]],
     air1_stale_seconds: int,
     sen55_stale_seconds: int,
 ) -> Dict[str, object]:
@@ -452,21 +455,37 @@ def build_row(
         reading = air1_latest_by_position.get(position)
         row[f"air1_raw_json_s{position}"] = reading.raw_json if reading else ""
 
-    sen55_fresh = is_fresh(sen55_latest, timestamp, sen55_stale_seconds)
-    row["sen55_source_timestamp"] = (
-        sen55_latest.timestamp.strftime("%Y-%m-%d %H:%M:%S") if sen55_latest else ""
-    )
-    row["sen55_age_seconds"] = (
-        int((timestamp - sen55_latest.timestamp).total_seconds()) if sen55_latest else ""
-    )
-    row["sen55_is_fresh"] = "1" if sen55_fresh else "0"
+    for sensor_name in SEN55_SENSORS:
+        sen55_latest = sen55_latest_by_sensor.get(sensor_name)
+        sen55_fresh = is_fresh(sen55_latest, timestamp, sen55_stale_seconds)
 
-    for field in SEN55_METADATA_FIELDS:
-        row[f"sen55_{field}"] = sen55_latest.values.get(field, "") if sen55_latest else ""
-    for field in SEN55_VALUE_FIELDS:
-        row[f"sen55_{field}"] = sen55_latest.values.get(field, "") if sen55_fresh and sen55_latest else ""
+        row[f"{sensor_name}_source_timestamp"] = (
+        sen55_latest.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        if sen55_latest else ""
+        )
 
-    row["sen55_raw_json"] = sen55_latest.raw_json if sen55_latest else ""
+        row[f"{sensor_name}_age_seconds"] = (
+        int((timestamp - sen55_latest.timestamp).total_seconds())
+        if sen55_latest else ""
+        )
+
+        row[f"{sensor_name}_is_fresh"] = "1" if sen55_fresh else "0"
+
+        for field in SEN55_METADATA_FIELDS:
+            row[f"{sensor_name}_{field}"] = (
+                sen55_latest.values.get(field, "")
+                if sen55_latest else ""
+            )
+
+        for field in SEN55_VALUE_FIELDS:
+            row[f"{sensor_name}_{field}"] = (
+                sen55_latest.values.get(field, "")
+                if sen55_fresh and sen55_latest else ""
+            )
+
+        row[f"{sensor_name}_raw_json"] = (
+            sen55_latest.raw_json if sen55_latest else ""
+        )
     return row
 
 
@@ -621,44 +640,37 @@ def run_live(args: argparse.Namespace) -> None:
     headers = build_headers(len(sensor_order))
     output_path = Path(args.output) if args.output else default_live_output()
     client = Air1Client(args.air1_api_url, args.air1_api_key, args.air1_timeout)
-    latest_sen55: Dict[str, Optional[Reading]] = {}
+    latest_sen55: Dict[str, Optional[Reading]] = {"sen55_01": None,"sen55_02": None,}
 
     def on_connect(mqtt, userdata, flags, rc):
         if rc == 0:
-            print(f"Connected to MQTT and subscribing to {args.mqtt_topic}")
-            mqtt.subscribe(args.mqtt_topic)
+            print(f"Connected to MQTT")
+            
+            for topic in MQTT_TOPICS:
+                print(f"Subscribing to {topic}")
+                mqtt.subscribe(topic)
         else:
             print(f"MQTT connection failed with rc={rc}")
 
     def on_message(mqtt, userdata, msg):
         try:
             payload = json.loads(msg.payload.decode())
-
             if isinstance(payload, dict):
 
                 reading = sen55_reading_from_row(payload)
-
+                
                 if reading is not None:
 
-                    sensor_id = payload.get(
-                        "sensor_id",
-                        "unknown"
-                    )
-
-                    latest_sen55[sensor_id] = reading
-
-                    print(f"Received data from {sensor_id}")
+                    sensor_id = payload.get("sensor_id")
+                    
+                    if sensor_id in latest_sen55:
+                        latest_sen55[sensor_id] = reading
 
         except Exception as exc:
             print(f"Skipping SEN55 MQTT message: {exc}")
 
     mqtt = mqtt_client.Client(client_id="combined_training_export")
-
-    mqtt.username_pw_set(
-        args.mqtt_username,
-        args.mqtt_password
-    )
-
+    mqtt.username_pw_set(args.mqtt_username, args.mqtt_password)
     mqtt.on_connect = on_connect
     mqtt.on_message = on_message
 
@@ -692,18 +704,17 @@ def run_live(args: argparse.Namespace) -> None:
             sleep_until_next_tick(args.interval_seconds)
             grid_timestamp = floor_to_interval(local_now(), args.interval_seconds)
             air1_latest = fetch_air1_latest(client, sensor_order)
-            for sensor_id, sensor_reading in latest_sen55.items():
-                row = build_row(
-                    timestamp=grid_timestamp,
-                    sensor_order=sensor_order,
-                    air1_latest_by_position=air1_latest,
-                    sen55_latest=sensor_reading,
-                    air1_stale_seconds=args.air1_stale_seconds,
-                    sen55_stale_seconds=args.sen55_stale_seconds,
-                )
-                append_row(output_path, headers, row)
-                row_count += 1
-                print(f"Wrote row {row_count}: {row['timestamp']}")
+            row = build_row(
+                timestamp=grid_timestamp,
+                sensor_order=sensor_order,
+                air1_latest_by_position=air1_latest,
+                sen55_latest_by_sensor=latest_sen55,
+                air1_stale_seconds=args.air1_stale_seconds,
+                sen55_stale_seconds=args.sen55_stale_seconds,
+            )
+            append_row(output_path, headers, row)
+            row_count += 1
+            print(f"Wrote row {row_count}: {row['timestamp']}")
     except KeyboardInterrupt:
         print("Stopping live collector...")
     finally:
