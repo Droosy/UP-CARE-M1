@@ -17,7 +17,7 @@ AIR1_API_KEY = os.getenv("AIR1_API_KEY", "3a21fe5a-78cb-4252-99ea-c8a87be7982e")
 
 MQTT_BROKER = os.getenv("SEN55_MQTT_BROKER", "10.158.71.19")
 MQTT_PORT = int(os.getenv("SEN55_MQTT_PORT", "1883"))
-MQTT_TOPIC = os.getenv("SEN55_MQTT_TOPIC", "sen55/#")
+MQTT_TOPIC = os.getenv("SEN55_MQTT_TOPIC", "sen55_#")
 MQTT_USERNAME = os.getenv("SEN55_MQTT_USERNAME", "guest")
 MQTT_PASSWORD = os.getenv("SEN55_MQTT_PASSWORD", "smartilab123")
 
@@ -622,13 +622,6 @@ def run_live(args: argparse.Namespace) -> None:
     output_path = Path(args.output) if args.output else default_live_output()
     client = Air1Client(args.air1_api_url, args.air1_api_key, args.air1_timeout)
     latest_sen55: Dict[str, Optional[Reading]] = {}
-
-    def on_connect(mqtt, userdata, flags, rc):
-        if rc == 0:
-            print(f"Connected to MQTT and subscribing to {args.mqtt_topic}")
-            mqtt.subscribe(args.mqtt_topic)
-        else:
-            print(f"MQTT connection failed with rc={rc}")
 
     def on_connect(mqtt, userdata, flags, rc):
         if rc == 0:
