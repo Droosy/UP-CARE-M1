@@ -18,7 +18,7 @@ PYTHON = sys.executable  # uses whatever python/venv you're running this launche
 
 # Adjust paths/args as needed
 SENSOR_SCRIPT = [r"D:\CoE 199\Final_Code_setup\Final_V3.py"]
-TRACKER_SCRIPT = [r"D:\CoE 199\Extra codes\199 occ count code with masking\rtsp_zone_tracker_updated2.py"]
+TRACKER_SCRIPT = [r"D:\CoE 199\Extra codes\199 occ count code with masking\rtsp_zone_tracker_updated4.py"]
 
 
 def main():
