@@ -17,7 +17,7 @@ import signal
 PYTHON = sys.executable  # uses whatever python/venv you're running this launcher with
 
 # Adjust paths/args as needed
-SENSOR_SCRIPT = [r"D:\CoE 199\Final_Code_setup\Final_V1.py"]
+SENSOR_SCRIPT = [r"D:\CoE 199\Final_Code_setup\Final_V3.py"]
 TRACKER_SCRIPT = [r"D:\CoE 199\Extra codes\199 occ count code with masking\rtsp_zone_tracker_updated2.py"]
 
 
