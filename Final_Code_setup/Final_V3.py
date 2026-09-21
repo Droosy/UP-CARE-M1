@@ -84,7 +84,7 @@ SEN55_METADATA_FIELDS = [
 # ==================== CALIBRATION ====================
 # Path to the offsets file produced by Air-Gradient_Reference.py. Must point
 # to the same output_dir that script's main() uses, so the two stay in sync.
-CALIBRATION_FILE = r"D:\CoE 199\Final_Code_setup\calibration_offsets.json"
+CALIBRATION_FILE = r"change"
 
 # Parameters that get calibrated. SEN55 is intentionally excluded per your notes.
 CALIBRATED_PARAMS = ["temperature", "humidity", "co2", "pm25"]
@@ -94,7 +94,7 @@ CALIBRATED_PARAMS = ["temperature", "humidity", "co2", "pm25"]
 # prints a SUMMARY line. Must match PERSON_COUNT_FILE in that script exactly.
 # Expected contents:
 #   {"timestamp": "2026-09-11 12:29:26", "cam1": 0, "cam2": 0, "combined": 0}
-PERSON_COUNT_FILE = r"D:\CoE 199\Final_Code_setup\person_count_latest.json"
+PERSON_COUNT_FILE = r"change"
 
 # If the person-count file hasn't been updated more recently than this many
 # seconds, we treat it as stale (tracker not running / crashed) and leave the
@@ -104,7 +104,7 @@ PERSON_COUNT_MAX_AGE_SECONDS = 30
 # ==================== OCCUPANCY PREDICTION MODEL ====================
 # Path to the trained RandomForest model (.pkl) that predicts occupancy from
 # the temp / RH / CO2 / PM2.5 readings.
-OCCUPANCY_MODEL_FILE = r"D:\CoE 199\random_forest_models\my_occupancy_model.pkl"
+OCCUPANCY_MODEL_FILE = r"change"
 
 # ==================== PER-ZONE (CAM 1 / CAM 2) PREDICTION MODEL ====================
 # Path to the MULTI-OUTPUT RandomForest (.pkl) that predicts the person count
@@ -864,7 +864,7 @@ def run_supervisor():
         return
 
 
-def run_continuous_collection(output_dir=r"D:\CoE 199\data_199",
+def run_continuous_collection(output_dir=r"change",
                                poll_interval_seconds=POLL_INTERVAL_SECONDS,
                                restart_at_midnight=RESTART_DAILY_AT_MIDNIGHT):
     """Continuously poll AIR-1 + SEN55 on a FIXED clock schedule (every
@@ -985,7 +985,7 @@ def main():
         return
 
     # Worker process (or restart feature disabled): do the actual collection
-    restart_needed = run_continuous_collection(output_dir=r"D:\CoE 199\data_199")
+    restart_needed = run_continuous_collection(output_dir=r"change")
     if restart_needed:
         sys.exit(RESTART_EXIT_CODE)
 
