@@ -4,7 +4,7 @@ import pickle
 import sys
 import time
 import subprocess
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import csv
 import os
 import paho.mqtt.client as mqtt
@@ -134,6 +134,14 @@ ZONE_MODEL_FEATURE_COLUMNS = None
 # How often (in seconds) to poll all sensors and append a new row. Change
 # this to whatever cadence makes sense for you.
 POLL_INTERVAL_SECONDS = 60
+
+# ==================== AIR-1 STALE DATA CHECK ====================
+# If an AIR-1 sensor's latest reading (as reported by the API) is older than
+# this many seconds, it is treated as stale and its cells are left BLANK for
+# that row instead of repeating the old value. Keep this comfortably above
+# the sensor's reporting interval + POLL_INTERVAL_SECONDS, otherwise you'll
+# get false blanks from normal timing jitter.
+AIR1_MAX_AGE_SECONDS = 180
 
 # Fixed filename for continuous runs - no timestamp in the name since the
 # file now represents an entire session (started/stopped whenever), not a
@@ -489,7 +497,11 @@ class Air1Device:
     def get_all_latest_data(self):
         """Get latest data from all AIR-1 sensors in the order list, with
         calibration offsets applied (if available) to temperature, humidity,
-        co2, and pm25."""
+        co2, and pm25.
+
+        A sensor whose latest API reading is older than AIR1_MAX_AGE_SECONDS
+        is treated as stale and stored as None, so its cells are written
+        blank instead of repeating an old (frozen) value."""
         latest_readings = {}
 
         print("\nCollecting latest data from all AIR-1 sensors...")
@@ -505,6 +517,19 @@ class Air1Device:
                 dt_local = self.convert_timestamp_to_datetime(data.get('timestamp'))
 
                 if dt_local:
+                    # Staleness check. The API timestamp is UTC (that's why 8h
+                    # is added in convert_timestamp_to_datetime), so compare
+                    # against UTC "now". This keeps the check independent of
+                    # whatever timezone this PC is set to.
+                    dt_utc = dt_local - timedelta(hours=8)
+                    age_seconds = (datetime.now(timezone.utc).replace(tzinfo=None) - dt_utc).total_seconds()
+
+                    if age_seconds > AIR1_MAX_AGE_SECONDS:
+                        print(f"  ⚠️ Stale data (last reading {dt_local.strftime('%Y-%m-%d %H:%M:%S')}, "
+                              f"{age_seconds:.0f}s old > {AIR1_MAX_AGE_SECONDS}s limit) - leaving blank")
+                        latest_readings[device_id] = None
+                        continue
+
                     raw_reading = {
                         'timestamp': dt_local,
                         'temperature': data.get('temperature'),
@@ -519,7 +544,7 @@ class Air1Device:
                     calibrated_reading = apply_calibration(device_id, raw_reading, self.calibration_offsets)
                     latest_readings[device_id] = calibrated_reading  # Store by device_id instead of position
 
-                    print(f"  ✅ Latest reading at: {dt_local.strftime('%Y-%m-%d %H:%M:%S')}")
+                    print(f"  ✅ Latest reading at: {dt_local.strftime('%Y-%m-%d %H:%M:%S')} ({age_seconds:.0f}s old)")
                     if device_id in self.calibration_offsets and self.calibration_offsets[device_id]:
                         print(f"     Temp: {raw_reading.get('temperature', 'N/A')}°C (raw) -> "
                               f"{calibrated_reading.get('temperature', 'N/A')}°C (calibrated), "
@@ -702,8 +727,8 @@ def collect_one_row(air1, sen55, occupancy_model=None, zone_model=None, zone_fea
         print("\n⚠️ No SEN55 data available this cycle")
 
     # Determine the overall timestamp for this row: use the LATEST (max)
-    # timestamp among all AIR-1 sensors that responded and the SEN55 reading
-    # (if present). Falls back to "now" if nothing responded at all.
+    # timestamp among all AIR-1 sensors that responded (and weren't stale) and
+    # the SEN55 reading (if present). Falls back to "now" if nothing responded.
     all_timestamps = [
         air1_readings[device_id]['timestamp']
         for device_id in SENSOR_ORDER
@@ -855,6 +880,7 @@ def run_continuous_collection(output_dir=r"D:\CoE 199\data_199",
     print(f"\nAIR-1 + SEN55 continuous collector (calibration + occupancy + zone prediction)")
     print(f"Output file: {os.path.abspath(filepath)}")
     print(f"Polling every {poll_interval_seconds}s | Ctrl+C to stop")
+    print(f"AIR-1 readings older than {AIR1_MAX_AGE_SECONDS}s are written as blank (stale)")
     if restart_deadline:
         print(f"Auto-restart at: {restart_deadline.strftime('%Y-%m-%d %H:%M:%S')}")
 
@@ -878,7 +904,7 @@ def run_continuous_collection(output_dir=r"D:\CoE 199\data_199",
 
                 active_sensors = sum(1 for d in SENSOR_ORDER if air1_readings.get(d))
                 print(f"\n✅ Row {row_count} written "
-                      f"({active_sensors}/15 AIR-1, SEN55: {'Yes' if sen55_reading else 'No'}, "
+                      f"({active_sensors}/15 AIR-1 fresh, SEN55: {'Yes' if sen55_reading else 'No'}, "
                       f"person_count: {row_data.get('person_count', '')}, "
                       f"predicted_occupancy: {row_data.get('predicted_occupancy', '')})")
                 print(f"   Cam 1: {row_data.get('cam_1_person_count', '')} actual / "
