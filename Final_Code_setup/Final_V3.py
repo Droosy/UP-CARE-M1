@@ -864,7 +864,7 @@ def run_supervisor():
         return
 
 
-def run_continuous_collection(output_dir=r"change to output path of csv",
+def run_continuous_collection(output_dir=r"C:\PlatformIO\Projects\Final_Code_setup\data_199",
                                poll_interval_seconds=POLL_INTERVAL_SECONDS,
                                restart_at_midnight=RESTART_DAILY_AT_MIDNIGHT):
     """Continuously poll AIR-1 + SEN55 on a FIXED clock schedule (every
@@ -985,7 +985,7 @@ def main():
         return
 
     # Worker process (or restart feature disabled): do the actual collection
-    restart_needed = run_continuous_collection(output_dir=r"change to output path of csv")
+    restart_needed = run_continuous_collection(output_dir=r"C:\PlatformIO\Projects\Final_Code_setup\data_199")
     if restart_needed:
         sys.exit(RESTART_EXIT_CODE)
 
