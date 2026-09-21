@@ -84,7 +84,7 @@ SEN55_METADATA_FIELDS = [
 # ==================== CALIBRATION ====================
 # Path to the offsets file produced by Air-Gradient_Reference.py. Must point
 # to the same output_dir that script's main() uses, so the two stay in sync.
-CALIBRATION_FILE = r"change to calibration .json path"
+CALIBRATION_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\calibration_offsets.json"
 
 # Parameters that get calibrated. SEN55 is intentionally excluded per your notes.
 CALIBRATED_PARAMS = ["temperature", "humidity", "co2", "pm25"]
@@ -94,7 +94,7 @@ CALIBRATED_PARAMS = ["temperature", "humidity", "co2", "pm25"]
 # prints a SUMMARY line. Must match PERSON_COUNT_FILE in that script exactly.
 # Expected contents:
 #   {"timestamp": "2026-09-11 12:29:26", "cam1": 0, "cam2": 0, "combined": 0}
-PERSON_COUNT_FILE = r"change to person count .json path"
+PERSON_COUNT_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\person_count_latest.json"
 
 # If the person-count file hasn't been updated more recently than this many
 # seconds, we treat it as stale (tracker not running / crashed) and leave the
@@ -104,7 +104,7 @@ PERSON_COUNT_MAX_AGE_SECONDS = 30
 # ==================== OCCUPANCY PREDICTION MODEL ====================
 # Path to the trained RandomForest model (.pkl) that predicts occupancy from
 # the temp / RH / CO2 / PM2.5 readings.
-OCCUPANCY_MODEL_FILE = r"change to occupancy model .pkl file path"
+OCCUPANCY_MODEL_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\ML_Models\my_occupancy_model.pkl"
 
 # ==================== PER-ZONE (CAM 1 / CAM 2) PREDICTION MODEL ====================
 # Path to the MULTI-OUTPUT RandomForest (.pkl) that predicts the person count
