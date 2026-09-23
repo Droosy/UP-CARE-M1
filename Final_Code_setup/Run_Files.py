@@ -17,8 +17,8 @@ import signal
 PYTHON = sys.executable  # uses whatever python/venv you're running this launcher with
 
 # Adjust paths/args as needed
-SENSOR_SCRIPT = [r"D:\CoE 199\Final_Code_setup\Final_V3.py"]
-TRACKER_SCRIPT = [r"D:\CoE 199\Extra codes\199 occ count code with masking\rtsp_zone_tracker_updated4.py"]
+SENSOR_SCRIPT = [r"C:\PlatformIO\Projects\Final_Code_setup\Final_V3.py"]
+TRACKER_SCRIPT = [r"C:\PlatformIO\Projects\Final_Code_setup\199 occ count code with masking\rtsp_zone_tracker_updated4.py"]
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
     creationflags = subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
     sensor_proc = subprocess.Popen([PYTHON] + SENSOR_SCRIPT, creationflags=creationflags)
 
-    print("Starting camera tracker (Rtsp_zone_tracker_updated2.py)...")
+    print("Starting camera tracker (Rtsp_zone_tracker_updated4.py)...")
     tracker_proc = subprocess.Popen([PYTHON] + TRACKER_SCRIPT, creationflags=creationflags)
 
     procs = [sensor_proc, tracker_proc]
