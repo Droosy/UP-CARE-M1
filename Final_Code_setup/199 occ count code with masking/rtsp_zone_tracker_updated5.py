@@ -205,8 +205,8 @@ def parse_args():
     p.add_argument("--model", default="yolov5nu.pt",
                    help="YOLO model path (default: yolov5n.pt)")
     p.add_argument("--zone1", help="Override mask PNG for zone1 (cam1). White area = in-zone.")
-    p.add_argument("--zone2", help="Override mask PNG for zone2 (cam1). White area = in-zone.")
-    p.add_argument("--zone3", help="Override mask PNG for zone3 (cam2). White area = in-zone.")
+    p.add_argument("--zone2", help="Override mask PNG for zone2 (cam2). White area = in-zone.")
+    p.add_argument("--zone3", help="Override mask PNG for zone3 (cam1). White area = in-zone.")
     p.add_argument("--zone4", help="Override mask PNG for zone4 (cam2). White area = in-zone.")
     p.add_argument("--out", help="Output video file path (optional).")
     p.add_argument("--display", action="store_true", help="Show live windows.")
@@ -214,7 +214,7 @@ def parse_args():
     p.add_argument("--conf1", type=float, default=0.1, help="Confidence threshold for cam1 (default 0.25)")
     p.add_argument("--conf2", type=float, default=0.05, help="Confidence threshold for cam2 (default 0.10)")
     p.add_argument("--device", default="0", help="Device for inference (0 for GPU0, cpu for CPU).")
-    p.add_argument("--output-interval", type=float, default=2.0,
+    p.add_argument("--output-interval", type=float, default=10.0,
                    help="Live mode only: seconds between summary outputs (default 10s)")
     p.add_argument("--max-persons", type=int, default=33, help="Max detections per frame")
 
