@@ -104,7 +104,7 @@ PERSON_COUNT_MAX_AGE_SECONDS = 30
 # ==================== OCCUPANCY PREDICTION MODEL ====================
 # Path to the trained RandomForest model (.pkl) that predicts occupancy from
 # the temp / RH / CO2 / PM2.5 readings.
-OCCUPANCY_MODEL_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\ML_Models\my_occupancy_model.pkl"
+OCCUPANCY_MODEL_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\ML_Models\occupancy_RF_model_mk1.pkl"
 
 # ==================== PER-ZONE (CAM 1 / CAM 2) PREDICTION MODEL ====================
 # Path to the MULTI-OUTPUT RandomForest (.pkl) that predicts the person count
