@@ -78,12 +78,12 @@ CAM_SOURCES = {
 # None to fall back to scanning the ./masks/ directory next to this script.
 ZONE_MASKS = {
     "cam1": [
-        ("zone1", r"C:/Users/julia/yolo_project/zone-tracker/masks/cam1-final_zone1.png"),
-        ("zone3", r"C:/Users/julia/yolo_project/zone-tracker/masks/cam1-final_zone3.png"),
+        ("zone1", r"C:\PlatformIO\Projects\Final_Code_setup\199 occ count code with masking\masks\cam1-final_zone1.png"),
+        ("zone3", r"C:\PlatformIO\Projects\Final_Code_setup\199 occ count code with masking\masks\cam1-final_zone3.png"),
     ],
     "cam2": [
-        ("zone2", r"C:/Users/julia/yolo_project/zone-tracker/masks/cam2-final_zone2.png"),
-        ("zone4", r"C:/Users/julia/yolo_project/zone-tracker/masks/cam2-final_zone4.png"),
+        ("zone2", r"C:\PlatformIO\Projects\Final_Code_setup\199 occ count code with masking\masks\cam2-final_zone2.png"),
+        ("zone4", r"C:\PlatformIO\Projects\Final_Code_setup\199 occ count code with masking\masks\cam2-final_zone4.png"),
     ],
 }
 
@@ -117,7 +117,7 @@ CSV_OUTPUT_PATH = r"C:/Users/julia/yolo_project/zone-tracker/CSV results/results
 # with --json-path. Must match whatever path the downstream reader
 # (e.g. code.py) expects.
 ENABLE_JSON_BRIDGE = True
-PERSON_COUNT_FILE = r"D:\CoE 199\Final_Code_setup\person_count_latest.json"
+PERSON_COUNT_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\person_count_latest.json"
 
 # ---------------------------------------------------------------------------
 # Processing mode
@@ -211,8 +211,8 @@ def parse_args():
     p.add_argument("--out", help="Output video file path (optional).")
     p.add_argument("--display", action="store_true", help="Show live windows.")
     p.add_argument("--imgsz", type=int, default=1920, help="Inference image size (default: 1920)")
-    p.add_argument("--conf1", type=float, default=0.1, help="Confidence threshold for cam1 (default 0.25)")
-    p.add_argument("--conf2", type=float, default=0.05, help="Confidence threshold for cam2 (default 0.10)")
+    p.add_argument("--conf1", type=float, default=0.08, help="Confidence threshold for cam1 (default 0.25)")
+    p.add_argument("--conf2", type=float, default=0.02, help="Confidence threshold for cam2 (default 0.10)")
     p.add_argument("--device", default="0", help="Device for inference (0 for GPU0, cpu for CPU).")
     p.add_argument("--output-interval", type=float, default=10.0,
                    help="Live mode only: seconds between summary outputs (default 10s)")
