@@ -26,8 +26,8 @@ import time
 PYTHON = sys.executable  # uses whatever python/venv you're running this launcher with
 
 # Adjust paths/args as needed
-SENSOR_SCRIPT = [r"C:\PlatformIO\Projects\Final_Code_setup\Final_V3.py"]
-TRACKER_SCRIPT = [r"C:\PlatformIO\Projects\Final_Code_setup\199 occ count code with masking\rtsp_zone_tracker_updated4.py"]
+SENSOR_SCRIPT = [r"C:\PlatformIO\Projects\Final_Code_setup\Final_V4.py"]
+TRACKER_SCRIPT = [r"C:\PlatformIO\Projects\Final_Code_setup\199 occ count code with masking\rtsp_zone_tracker_updated5.py"]
 
 SCRIPTS = {
     "sensor logger": SENSOR_SCRIPT,
