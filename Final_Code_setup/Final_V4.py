@@ -91,7 +91,7 @@ CALIBRATED_PARAMS = ["temperature", "humidity", "co2", "pm25"]
 #    "cam1": 0, "cam2": 0, "combined": 0, "total": 0,
 #    "cam1_stale": false, "cam2_stale": false, "stale": false,
 #    "epoch": 1790691291.78}
-PERSON_COUNT_FILE = r"D:\CoE 199\Final_Code_setup\person_count_latest.json"
+PERSON_COUNT_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\person_count_latest.json"
 
 # If the person-count file is older than this many seconds, it is treated as
 # stale (tracker not running / crashed) and counts are reported as 0.
