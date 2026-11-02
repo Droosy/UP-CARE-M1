@@ -75,11 +75,11 @@ AQ1_VALUE_FIELDS = ["temperature", "humidity", "co2", "pm2_5"]
 
 # ==================== CALIBRATION ====================
 # Existing calibration file for the iLab AIR-1 sensors (leave this separate).
-CALIBRATION_FILE = r"/Users/andreus/Documents/Droosy UP-CARE-M1 main Final_Code_setup/calibration_offsets.json"
+CALIBRATION_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\calibration_offsets.json"
 
 # Separate calibration file for your custom AQ1 module. This file is used only
 # for the four AQ1 output columns (BJ:BM): AQ1_Temp, AQ1_rh, AQ1_co2, AQ1_pm25.
-AQ_CALIBRATION_FILE = r"/Users/andreus/Documents/Droosy UP-CARE-M1 main Final_Code_setup/AQ_calibration.json"
+AQ_CALIBRATION_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\AQ_calibration.json"
 
 # Parameters that get calibrated in the existing iLab AIR-1 calibration file.
 CALIBRATED_PARAMS = ["temperature", "humidity", "co2", "pm25"]
@@ -97,19 +97,19 @@ AQ1_CALIBRATION_FIELDS = {
 #    "cam1": 0, "cam2": 0, "combined": 0, "total": 0,
 #    "cam1_stale": false, "cam2_stale": false, "stale": false,
 #    "epoch": 1790691291.78}
-PERSON_COUNT_FILE = r"/Users/andreus/Documents/Droosy UP-CARE-M1 main Final_Code_setup/person_count_latest.json"
+PERSON_COUNT_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\person_count_latest.json"
 
 # If the person-count file is older than this many seconds, it is treated as
 # stale (tracker not running / crashed) and counts are reported as 0.
 PERSON_COUNT_MAX_AGE_SECONDS = 30
 
 # ==================== OCCUPANCY PREDICTION MODEL ====================
-OCCUPANCY_MODEL_FILE = r"/Users/andreus/Documents/Droosy UP-CARE-M1 main Final_Code_setup/ML_Models/occupancy_RF_model_mk3.pkl"
+OCCUPANCY_MODEL_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\ML_Models\occupancy_RF_model_mk3.pkl"
 
 # ==================== PER-ZONE (CAM 1 / CAM 2) PREDICTION MODEL ====================
 # MULTI-OUTPUT RandomForest trained with:
 #     y = df[['cam_1_person_count', 'cam_2_person_count']]
-ZONE_OCCUPANCY_MODEL_FILE = r"/Users/andreus/Documents/Droosy UP-CARE-M1 main Final_Code_setup/ML_Models/to_change.pkl"
+ZONE_OCCUPANCY_MODEL_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\ML_Models\to_change.pkl"
 
 # Only needed if the model was trained on a numpy array (no stored column names).
 # Leave as None to use the model's stored names, or all 60 sensor columns.
@@ -122,7 +122,7 @@ ZONE_MODEL_FEATURE_COLUMNS = None
 #             'zone_3_person_count', 'zone_4_person_count']]
 # Until this file exists, the zone_X_predicted_count columns are left blank.
 # NOTE: this must be a DIFFERENT file from the 2-camera model above.
-FOUR_ZONES_OCCUPANCY_MODEL_FILE = r"/Users/andreus/Documents/Droosy UP-CARE-M1 main Final_Code_setup/ML_Models/to_change.pkl"
+FOUR_ZONES_OCCUPANCY_MODEL_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\ML_Models\to_change.pkl"
 
 # Same idea as ZONE_MODEL_FEATURE_COLUMNS: only needed for numpy-trained models.
 FOUR_ZONES_MODEL_FEATURE_COLUMNS = None
@@ -954,7 +954,7 @@ def run_supervisor():
 
 
 
-def run_continuous_collection(output_dir=r"/Users/andreus/Documents/Droosy UP-CARE-M1 main Final_Code_setup/data_199",
+def run_continuous_collection(output_dir=r"C:\PlatformIO\Projects\Final_Code_setup\data_199",
                                poll_interval_seconds=POLL_INTERVAL_SECONDS,
                                restart_at_midnight=RESTART_DAILY_AT_MIDNIGHT):
     """Continuously poll AIR-1 + AQ1 on a FIXED clock schedule and append
@@ -1085,7 +1085,7 @@ def main():
         return
 
     # Worker process (or restart feature disabled): do the actual collection
-    restart_needed = run_continuous_collection(output_dir=r"/Users/andreus/Documents/Droosy UP-CARE-M1 main Final_Code_setup/data_199")
+    restart_needed = run_continuous_collection(output_dir=r"C:\PlatformIO\Projects\Final_Code_setup\data_199")
     if restart_needed:
         sys.exit(RESTART_EXIT_CODE)
 
