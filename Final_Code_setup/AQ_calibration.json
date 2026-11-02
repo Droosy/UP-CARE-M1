@@ -1,0 +1,57 @@
+{
+  "generated_at": "2026-11-01 23:42:39 PST",
+  "calibration_target": "AQ1",
+  "reference_sensor": {
+    "type": "AirGradient One",
+    "device_id": "6f31cc"
+  },
+  "method": "mean paired difference after timestamp matching",
+  "note": "offset = AQ module reading - reference reading. Apply as corrected = raw - offset.",
+  "timestamp_matching": {
+    "module_rows_matched": 60068,
+    "module_rows_unmatched": 12,
+    "exact_timestamp_matches": 60057,
+    "nearest_timestamp_matches": 11,
+    "tolerance_seconds": 30,
+    "mean_absolute_timestamp_difference_seconds": 0.0028301258573616567,
+    "maximum_absolute_timestamp_difference_seconds": 30.0
+  },
+  "offsets": {
+    "AQ1": {
+      "temperature": 0.8692619778590257,
+      "humidity": -1.4769807035777445,
+      "co2": -58.0397957651299,
+      "pm25": 5.271037881118518
+    }
+  },
+  "statistics": {
+    "temperature": {
+      "display_name": "Temperature (°C)",
+      "paired_samples": 59940,
+      "aq_module_mean": 29.704280530530532,
+      "reference_mean": 28.835018552671507,
+      "mean_offset_aq_minus_reference": 0.8692619778590257
+    },
+    "humidity": {
+      "display_name": "Relative humidity (%)",
+      "paired_samples": 59940,
+      "aq_module_mean": 65.02355121788455,
+      "reference_mean": 66.5005319214623,
+      "mean_offset_aq_minus_reference": -1.4769807035777445
+    },
+    "co2": {
+      "display_name": "CO2 (ppm)",
+      "paired_samples": 59931,
+      "aq_module_mean": 742.3768166725067,
+      "reference_mean": 800.4166124376366,
+      "mean_offset_aq_minus_reference": -58.0397957651299
+    },
+    "pm25": {
+      "display_name": "PM2.5 (µg/m³)",
+      "paired_samples": 59940,
+      "aq_module_mean": 10.351458124791458,
+      "reference_mean": 5.08042024367294,
+      "mean_offset_aq_minus_reference": 5.271037881118518
+    }
+  }
+}
