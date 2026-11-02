@@ -75,7 +75,7 @@ AQ1_VALUE_FIELDS = ["temperature", "humidity", "co2", "pm2_5"]
 
 # ==================== CALIBRATION ====================
 # Existing calibration file for the iLab AIR-1 sensors (leave this separate).
-CALIBRATION_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\calibration_offsets.json"
+CALIBRATION_FILE = r"C:\PlatformIO\Projects\Final_Code_setup\calibration_offsets2.json"
 
 # Separate calibration file for your custom AQ1 module. This file is used only
 # for the four AQ1 output columns (BJ:BM): AQ1_Temp, AQ1_rh, AQ1_co2, AQ1_pm25.
