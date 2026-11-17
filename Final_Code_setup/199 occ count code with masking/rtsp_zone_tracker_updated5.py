@@ -211,7 +211,7 @@ def parse_args():
     p.add_argument("--out", help="Output video file path (optional).")
     p.add_argument("--display", action="store_true", help="Show live windows.")
     p.add_argument("--imgsz", type=int, default=1920, help="Inference image size (default: 1920)")
-    p.add_argument("--conf1", type=float, default=0.08, help="Confidence threshold for cam1 (default 0.25)")
+    p.add_argument("--conf1", type=float, default=0.15, help="Confidence threshold for cam1 (default 0.25)")
     p.add_argument("--conf2", type=float, default=0.02, help="Confidence threshold for cam2 (default 0.10)")
     p.add_argument("--device", default="0", help="Device for inference (0 for GPU0, cpu for CPU).")
     p.add_argument("--output-interval", type=float, default=10.0,
