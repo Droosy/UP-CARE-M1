@@ -140,7 +140,7 @@ AQ1_MAX_AGE_SECONDS = 30
 # NOTE: the header now has 8 extra columns (zone_1..zone_4). If an older file
 # with this name already exists, rename/move it or change this filename,
 # otherwise new rows will be misaligned with the old header.
-CONTINUOUS_CSV_FILENAME = "Final_V5.csv"
+CONTINUOUS_CSV_FILENAME = "Final_V5_iLabData.csv"
 
 # ==================== DAILY MIDNIGHT RESTART ====================
 RESTART_DAILY_AT_MIDNIGHT = True   # set False to disable
